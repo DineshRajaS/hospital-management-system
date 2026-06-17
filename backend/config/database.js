@@ -3,53 +3,66 @@ const { Sequelize } = require('sequelize');
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
-// Step 1: Create DB if it doesn't exist (connect without DB name)
+// Parse Railway's full MySQL URL or use individual env vars
+const getDbConfig = () => {
+  const rawHost = process.env.DB_HOST || '';
+
+  if (rawHost.startsWith('mysql://')) {
+    const url = new URL(rawHost);
+    return {
+      host: url.hostname,
+      port: parseInt(url.port) || 3306,
+      user: url.username,
+      password: url.password,
+      database: url.pathname.replace('/', '')
+    };
+  }
+
+  return {
+    host: rawHost,
+    port: parseInt(process.env.DB_PORT) || 3306,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+  };
+};
+
+const cfg = getDbConfig();
+
+// Log (without password) to confirm what's being used
+console.log('🔌 Connecting to DB:', `${cfg.host}:${cfg.port} / ${cfg.database} as ${cfg.user}`);
+
+// Step 1: Create DB if not exists
 const createDatabaseIfNotExists = async () => {
   const connection = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD
+    host: cfg.host,
+    port: cfg.port,
+    user: cfg.user,
+    password: cfg.password
   });
 
   await connection.query(
-    `CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\` 
+    `CREATE DATABASE IF NOT EXISTS \`${cfg.database}\` 
      CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
   );
 
-  console.log(`✅ Database "${process.env.DB_NAME}" is ready`);
+  console.log(`✅ Database "${cfg.database}" is ready`);
   await connection.end();
 };
 
-// Step 2: Sequelize instance (used after DB is guaranteed to exist)
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: 'mysql',
-    logging: process.env.NODE_ENV === 'development' ? console.log : false,
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000
-    },
-    define: {
-      timestamps: true,
-      underscored: true
-    }
-  }
-);
+// Step 2: Sequelize instance
+const sequelize = new Sequelize(cfg.database, cfg.user, cfg.password, {
+  host: cfg.host,
+  port: cfg.port,
+  dialect: 'mysql',
+  logging: process.env.NODE_ENV === 'development' ? console.log : false,
+  pool: { max: 5, min: 0, acquire: 30000, idle: 10000 },
+  define: { timestamps: true, underscored: true }
+});
 
 const testConnection = async () => {
   try {
-    // First ensure DB exists
     await createDatabaseIfNotExists();
-
-    // Then authenticate with Sequelize
     await sequelize.authenticate();
     console.log('✅ Database connection established successfully');
   } catch (error) {
