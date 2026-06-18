@@ -21,17 +21,19 @@ import { AuthService } from '../../../core/services/auth';
           @if (isAuthChecked) {
             <nav class="nav-menu">
               <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-              <a routerLink="/doctors" routerLinkActive="active">Doctors</a>
+              <a routerLink="/doctors" routerLinkActive="active">Our Doctors</a>
               
               @if (authService.isAuthenticated()) {
-                <a routerLink="/appointments" routerLinkActive="active">Appointments</a>
+                <!-- <a routerLink="/appointments" routerLinkActive="active">Appointments</a> -->
                 
                 @if (authService.isPatient()) {
+                  <a routerLink="/appointments" routerLinkActive="active">Appointments</a>
                   <a routerLink="/bills" routerLinkActive="active">My Bills</a>
                   <a routerLink="/profile" routerLinkActive="active">Profile</a>
                 }
                 
                 @if (authService.isDoctor()) {
+                  <a routerLink="/appointments" routerLinkActive="active">Appointments</a>
                   <a routerLink="/doctor/schedule" routerLinkActive="active">My Schedule</a>
                   <a routerLink="/doctor/profile" routerLinkActive="active">Profile</a>
                 }
