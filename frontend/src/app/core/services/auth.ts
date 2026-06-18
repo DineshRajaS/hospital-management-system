@@ -1,9 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
-// import { environment } from '../../../environments/environment.prod';
 import { AuthResponse, LoginRequest, RegisterRequest, User } from '../models/interfaces';
 
 @Injectable({
@@ -45,13 +44,17 @@ export class AuthService {
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
-      tap(response => this.handleAuthSuccess(response))
+      tap(response => this.handleAuthSuccess(response)),
+      // ✅ Fix: catchError re-throws the raw HttpErrorResponse so the
+      //    component's error() callback receives the full object with error.error
+      catchError(error => throwError(() => error))
     );
   }
 
   register(userData: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData).pipe(
-      tap(response => this.handleAuthSuccess(response))
+      tap(response => this.handleAuthSuccess(response)),
+      catchError(error => throwError(() => error))
     );
   }
 
