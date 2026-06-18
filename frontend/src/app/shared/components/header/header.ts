@@ -19,7 +19,6 @@ import { AuthService } from '../../../core/services/auth';
           
           <!-- Only render navigation after auth check is complete -->
           <!-- @if (isAuthChecked) { -->
-          @if (authService.isAuthChecked()) {
             <nav class="nav-menu">
               <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
               <a routerLink="/doctors" routerLinkActive="active">Our Doctors</a>
@@ -64,7 +63,7 @@ import { AuthService } from '../../../core/services/auth';
                 <a routerLink="/register" class="btn btn-secondary">Register</a>
               }
             </div>
-          }
+          <!-- } -->
         </div>
       </div>
     </header>
@@ -235,18 +234,18 @@ import { AuthService } from '../../../core/services/auth';
     }
   `]
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent  {
   authService = inject(AuthService);
   private router = inject(Router);
   
   // isAuthChecked = false;
 
-  ngOnInit(): void {
-    // Wait for auth service to initialize
-    setTimeout(() => {
-      // this.isAuthChecked = true;
-    }, 0);
-  }
+  // ngOnInit(): void {
+  //   // Wait for auth service to initialize
+  //   setTimeout(() => {
+  //     this.isAuthChecked = true;
+  //   }, 0);
+  // }
 
   logout(): void {
     this.authService.logout();
