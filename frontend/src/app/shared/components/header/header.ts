@@ -18,7 +18,8 @@ import { AuthService } from '../../../core/services/auth';
           </div>
           
           <!-- Only render navigation after auth check is complete -->
-          @if (isAuthChecked) {
+          <!-- @if (isAuthChecked) { -->
+          @if (authService.isAuthChecked()) {
             <nav class="nav-menu">
               <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
               <a routerLink="/doctors" routerLinkActive="active">Our Doctors</a>
@@ -238,12 +239,12 @@ export class HeaderComponent implements OnInit {
   authService = inject(AuthService);
   private router = inject(Router);
   
-  isAuthChecked = false;
+  // isAuthChecked = false;
 
   ngOnInit(): void {
     // Wait for auth service to initialize
     setTimeout(() => {
-      this.isAuthChecked = true;
+      // this.isAuthChecked = true;
     }, 0);
   }
 

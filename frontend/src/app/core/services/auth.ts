@@ -16,11 +16,15 @@ export class AuthService {
 
   currentUser = signal<User | null>(null);
   isAuthenticated = signal<boolean>(false);
+  isAuthChecked = signal<boolean>(false);
 
   constructor() {
     // Only run auth check if browser environment is detected
     if (this.isBrowser()) {
       this.checkAuth();
+      this.isAuthChecked.set(true); // set immediately after ✅
+    } else {
+      this.isAuthChecked.set(true); // SSR: don't block rendering
     }
   }
 
