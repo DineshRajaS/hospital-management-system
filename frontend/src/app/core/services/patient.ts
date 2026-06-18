@@ -9,7 +9,7 @@ import { Patient } from '../models/interfaces';
 })
 export class PatientService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/patients`;
+  private apiUrl = `${environment.apiUrl}/api/patients`;
 
   getAllPatients(): Observable<{ success: boolean; data: Patient[] }> {
     return this.http.get<{ success: boolean; data: Patient[] }>(this.apiUrl);

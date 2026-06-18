@@ -9,7 +9,7 @@ import { Payment } from '../models/interfaces';
 })
 export class PaymentService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/payments`;
+  private apiUrl = `${environment.apiUrl}/api/payments`;
 
   recordPayment(paymentData: any): Observable<{ success: boolean; data: Payment }> {
     return this.http.post<{ success: boolean; data: Payment }>(this.apiUrl, paymentData);

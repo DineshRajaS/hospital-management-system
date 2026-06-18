@@ -9,7 +9,7 @@ import { Doctor } from '../models/interfaces';
 })
 export class DoctorService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/doctors`;
+  private apiUrl = `${environment.apiUrl}/api/doctors`;
 
   getAllDoctors(filters?: any): Observable<{ success: boolean; data: Doctor[] }> {
     let params = new HttpParams();

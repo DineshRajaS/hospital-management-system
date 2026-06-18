@@ -9,7 +9,7 @@ import { Appointment } from '../models/interfaces';
 })
 export class AppointmentService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/appointments`;
+  private apiUrl = `${environment.apiUrl}/api/appointments`;
 
   createAppointment(appointmentData: any): Observable<{ success: boolean; data: Appointment }> {
     return this.http.post<{ success: boolean; data: Appointment }>(this.apiUrl, appointmentData);

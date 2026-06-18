@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+// import { environment } from '../../../environments/environment.prod';
 import { AuthResponse, LoginRequest, RegisterRequest, User } from '../models/interfaces';
 
 @Injectable({
@@ -12,7 +13,7 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  private apiUrl = `${environment.apiUrl}/auth`;
+  private apiUrl = `${environment.apiUrl}/api/auth`;
 
   currentUser = signal<User | null>(null);
   isAuthenticated = signal<boolean>(false);

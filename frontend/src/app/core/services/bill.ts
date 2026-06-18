@@ -9,7 +9,7 @@ import { Bill } from '../models/interfaces';
 })
 export class BillService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/bills`;
+  private apiUrl = `${environment.apiUrl}/api/bills`;
 
   createBill(billData: any): Observable<{ success: boolean; data: Bill }> {
     return this.http.post<{ success: boolean; data: Bill }>(this.apiUrl, billData);
