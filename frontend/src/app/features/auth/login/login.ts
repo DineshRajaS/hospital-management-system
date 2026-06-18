@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -176,6 +176,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef); // ✅ Fix: force UI update after async error
 
   loading = false;
   errorMessage = '';
@@ -194,7 +195,7 @@ export class LoginComponent {
         next: (response) => {
           this.loading = false;
           const role = response.user.role;
-          
+
           if (role === 'admin') {
             this.router.navigate(['/admin/dashboard']);
           } else if (role === 'doctor') {
@@ -205,7 +206,18 @@ export class LoginComponent {
         },
         error: (error) => {
           this.loading = false;
-          this.errorMessage = error.message || 'Login failed. Please try again.';
+
+          // ✅ Fix: Angular HttpClient wraps server response inside error.error
+          // Your Express sends: { error: 'Invalid credentials' }
+          // So the message lives at: error.error.error  OR  error.error.message
+          this.errorMessage =
+            error?.error?.error ||
+            error?.error?.message ||
+            error?.message ||
+            'Login failed. Please try again.';
+
+          // ✅ Fix: manually trigger change detection so UI updates immediately
+          this.cdr.detectChanges();
         }
       });
     }
